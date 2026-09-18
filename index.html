@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hub Alojamientos · Loggro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --green: #149E71;
+    --green-soft: #E6F5EF;
+    --green-dark: #0F7A57;
+    --ink: #2F2F2F;
+    --ink-soft: #5A5A5A;
+    --muted: #8A8A8A;
+    --bg: #FAFAF7;
+    --panel: #FFFFFF;
+    --border: #ECEBE7;
+    --border-strong: #DCDBD6;
+    --orange: #E55E1E;
+    --teal: #1F8297;
+    --deep: #003940;
+    --amber: #C79100;
+    --red: #B4321F;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 12px rgba(0,0,0,.03);
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; }
+  body {
+    font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--teal); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Layout */
+  .app { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; }
+  aside {
+    background: #FFFFFF;
+    border-right: 1px solid var(--border);
+    padding: 22px 16px;
+    position: sticky; top: 0; align-self: start;
+    height: 100vh; overflow-y: auto;
+  }
+  .brand { display:flex; align-items:center; gap:10px; padding: 0 6px 18px; border-bottom: 1px solid var(--border); }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 8px; background: var(--green);
+    display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700;
+    font-size: 15px; letter-spacing:.5px;
+  }
+  .brand-name { font-weight: 700; font-size: 15px; }
+  .brand-sub { font-size: 11px; color: var(--muted); }
+
+  .search { margin: 16px 0 10px; position: relative; }
+  .search input {
+    width: 100%; padding: 9px 12px 9px 32px; border-radius: 8px;
+    border: 1px solid var(--border); background: #F5F4F0; font-family: inherit;
+    font-size: 13px; outline: none;
+  }
+  .search input:focus { border-color: var(--green); background:#fff; }
+  .search svg { position:absolute; left:10px; top:9px; opacity:.5; }
+
+  nav ul { list-style:none; padding: 0; margin: 6px 0; }
+  nav li a {
+    display:flex; align-items:center; gap:10px; padding: 7px 10px; border-radius: 7px;
+    color: var(--ink-soft); font-size: 13.5px; font-weight: 500;
+    transition: background .15s ease;
+  }
+  nav li a:hover { background: #F1F0EC; text-decoration:none; color: var(--ink); }
+  nav li a.active { background: var(--green-soft); color: var(--green-dark); }
+  nav .section-label {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: .8px;
+    color: var(--muted); margin: 16px 10px 6px; font-weight: 600;
+  }
+  nav .emoji { width: 18px; display:inline-block; text-align:center; }
+
+  main { padding: 40px 56px 80px; max-width: 1080px; }
+  .hero { margin-bottom: 34px; }
+  .hero .kicker { color: var(--muted); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+  h1 { font-size: 34px; font-weight: 700; margin: 4px 0 8px; letter-spacing: -.5px; }
+  .hero p.lede { color: var(--ink-soft); max-width: 720px; margin: 0; }
+
+  section { margin: 44px 0 0; scroll-margin-top: 20px; }
+  h2 {
+    font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -.2px;
+    display:flex; align-items:center; gap:10px;
+  }
+  h2 .h-emoji { font-size: 22px; }
+  .section-sub { color: var(--muted); font-size: 13px; margin: 0 0 18px; }
+
+  h3 { font-size: 15.5px; font-weight: 600; margin: 18px 0 10px; }
+
+  /* Cards grid */
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow);
+  }
+  .card.tight { padding: 14px 16px; }
+
+  .stat .num { font-size: 26px; font-weight: 700; color: var(--ink); line-height: 1.1; }
+  .stat .lbl { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .stat .accent { color: var(--green); }
+
+  .quick a {
+    display:flex; align-items:center; gap:10px; padding: 12px 14px;
+    background:#fff; border:1px solid var(--border); border-radius: 9px;
+    color: var(--ink); font-weight: 500; font-size: 13.5px;
+    transition: border-color .15s, transform .15s;
+  }
+  .quick a:hover { border-color: var(--green); text-decoration:none; transform: translateY(-1px); }
+  .quick .em { width: 24px; text-align:center; }
+
+  /* Callout / notice */
+  .callout {
+    border-left: 3px solid var(--amber);
+    background: #FFF9EA;
+    padding: 12px 14px; border-radius: 6px;
+    font-size: 13.5px; color: #6B5300;
+  }
+  .callout.info { border-left-color: var(--teal); background: #EAF3F6; color: #0F4A56; }
+  .callout.neutral { border-left-color: var(--border-strong); background: #F5F4F0; color: var(--ink-soft); }
+
+  /* Accordion */
+  details.qa {
+    background: #fff; border: 1px solid var(--border); border-radius: 9px;
+    padding: 0; margin-bottom: 10px; overflow: hidden;
+  }
+  details.qa[open] { border-color: var(--green); }
+  details.qa summary {
+    padding: 14px 16px; cursor: pointer; font-weight: 600; font-size: 14px;
+    list-style: none; display:flex; align-items:flex-start; gap:12px;
+    color: var(--ink);
+  }
+  details.qa summary::-webkit-details-marker { display:none; }
+  details.qa summary .qnum {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 5px;
+    background: var(--green-soft); color: var(--green-dark);
+    display:flex; align-items:center; justify-content:center;
+    font-size: 11px; font-weight: 700;
+  }
+  details.qa summary .caret { margin-left:auto; color: var(--muted); transition: transform .2s; }
+  details.qa[open] summary .caret { transform: rotate(90deg); }
+  details.qa .body {
+    padding: 0 16px 16px 50px; color: var(--ink-soft); font-size: 13.5px;
+  }
+  details.qa .body p { margin: 4px 0 10px; }
+  details.qa .body ul { margin: 6px 0 10px; padding-left: 18px; }
+  details.qa .body li { margin: 3px 0; }
+
+  /* Badges */
+  .badge {
+    display:inline-block; padding: 2px 8px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; letter-spacing: .2px;
+  }
+  .b-green { background: var(--green-soft); color: var(--green-dark); }
+  .b-teal  { background: #E4F1F4; color: var(--teal); }
+  .b-orange { background: #FCEBE0; color: var(--orange); }
+  .b-gray  { background: #EFEEEA; color: var(--ink-soft); }
+  .b-amber { background: #FDF0D0; color: #8A6A00; }
+
+  /* Table */
+  table {
+    width: 100%; border-collapse: separate; border-spacing: 0;
+    background: #fff; border: 1px solid var(--border); border-radius: 9px;
+    overflow: hidden; font-size: 13.5px;
+  }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: #F7F6F2; font-weight: 600; font-size: 12.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .3px; }
+  tr:last-child td { border-bottom: none; }
+  td .badge { white-space: nowrap; }
+
+  /* Template block */
+  .template {
+    background: #F7F6F2; border: 1px dashed var(--border-strong);
+    border-radius: 8px; padding: 14px 16px; font-family: 'Montserrat', monospace;
+    font-size: 12.5px; color: var(--ink-soft); white-space: pre-wrap;
+    line-height: 1.7;
+  }
+  .template strong { color: var(--ink); font-weight: 600; }
+
+  /* Link block for external */
+  .linkbox {
+    display:flex; align-items:center; gap:12px; padding: 12px 14px;
+    background: #fff; border: 1px solid var(--border); border-radius: 9px;
+    font-size: 13px;
+  }
+  .linkbox .lb-emoji { font-size: 18px; }
+  .linkbox .lb-title { font-weight: 600; color: var(--ink); }
+  .linkbox .lb-desc { color: var(--muted); font-size: 12px; }
+  .linkbox a.lb-cta { margin-left:auto; padding: 6px 12px; background: var(--green); color:#fff; border-radius: 6px; font-weight: 600; font-size: 12px; }
+  .linkbox a.lb-cta:hover { background: var(--green-dark); text-decoration:none; }
+
+  /* Back to top */
+  #toTop {
+    position: fixed; bottom: 22px; right: 22px; width: 40px; height: 40px;
+    background: var(--ink); color:#fff; border-radius: 50%; border:none;
+    cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.18);
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+    font-size: 18px;
+  }
+  #toTop.show { opacity: 1; pointer-events: auto; }
+
+  /* Search hidden state */
+  .searchable.hidden { display: none !important; }
+
+  /* Mobile */
+  .menu-toggle { display:none; }
+  @media (max-width: 860px) {
+    .app { grid-template-columns: 1fr; }
+    aside { position: fixed; left: -280px; top: 0; height: 100vh; width: 260px; z-index: 40; transition: left .25s; }
+    aside.open { left: 0; }
+    main { padding: 20px 20px 60px; }
+    .menu-toggle {
+      display: inline-flex; align-items:center; gap:6px; margin-bottom: 14px;
+      background:#fff; border:1px solid var(--border); border-radius:8px; padding: 8px 12px;
+      font-family: inherit; font-weight:600; font-size:13px; cursor:pointer;
+    }
+    h1 { font-size: 26px; }
+  }
+
+  /* Footnote */
+  .foot { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">L</div>
+      <div>
+        <div class="brand-name">Loggro Alojamientos</div>
+        <div class="brand-sub">Hub del área</div>
+      </div>
+    </div>
+
+    <div class="search">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input type="text" id="search" placeholder="Buscar en el hub…" />
+    </div>
+
+    <div class="section-label">Vista general</div>
+    <nav>
+      <ul>
+        <li><a href="#inicio" class="nav-link active"><span class="emoji">🏠</span> Inicio</a></li>
+      </ul>
+      <div class="section-label">Operación</div>
+      <ul>
+        <li><a href="#devoluciones" class="nav-link"><span class="emoji">💸</span> Devoluciones</a></li>
+        <li><a href="#cancelaciones" class="nav-link"><span class="emoji">🚫</span> Cancelaciones</a></li>
+        <li><a href="#traslados" class="nav-link"><span class="emoji">🔀</span> Traslados</a></li>
+        <li><a href="#reservas-otas" class="nav-link"><span class="emoji">📥</span> Reservas OTAs</a></li>
+        <li><a href="#tarifas" class="nav-link"><span class="emoji">💲</span> Tarifas</a></li>
+      </ul>
+      <div class="section-label">Producto y canales</div>
+      <ul>
+        <li><a href="#ayenda" class="nav-link"><span class="emoji">🏨</span> OTA Ayenda</a></li>
+        <li><a href="#sire" class="nav-link"><span class="emoji">📋</span> SIRE</a></li>
+        <li><a href="#facturacion" class="nav-link"><span class="emoji">🧾</span> Facturación</a></li>
+        <li><a href="#liquidaciones" class="nav-link"><span class="emoji">🇲🇽</span> Liquidaciones MX</a></li>
+        <li><a href="#premium" class="nav-link"><span class="emoji">⭐</span> Premium (APP)</a></li>
+      </ul>
+      <div class="section-label">Procesos internos</div>
+      <ul>
+        <li><a href="#diagnostico" class="nav-link"><span class="emoji">🩺</span> Casos diagnóstico</a></li>
+        <li><a href="#sugerencias" class="nav-link"><span class="emoji">💡</span> Sugerencias</a></li>
+        <li><a href="#implementacion" class="nav-link"><span class="emoji">🔗</span> Sesiones e implementación</a></li>
+      </ul>
+      <div class="section-label">Comunicación</div>
+      <ul>
+        <li><a href="#correo-hoteles" class="nav-link"><span class="emoji">✉️</span> Correo a hoteles</a></li>
+      </ul>
+      <div class="section-label">Integraciones y políticas</div>
+      <ul>
+        <li><a href="#api" class="nav-link"><span class="emoji">🔌</span> API Alojamientos</a></li>
+        <li><a href="#descuentos" class="nav-link"><span class="emoji">🏷️</span> Política de descuentos</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main>
+    <button class="menu-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰ Menú</button>
+
+    <!-- INICIO -->
+    <section id="inicio">
+      <div class="hero">
+        <div class="kicker">Área · Alojamientos</div>
+        <h1>Centro de consulta del equipo</h1>
+        <p class="lede">Wiki operativo de Alojamientos. Reúne procedimientos, plantillas de escalamiento, reglas por canal y por plan, y accesos rápidos para el equipo de servicio, soporte y éxito del cliente.</p>
+      </div>
+
+      <div class="grid grid-4">
+        <div class="card stat"><div class="num accent">13</div><div class="lbl">Temas operativos documentados</div></div>
+        <div class="card stat"><div class="num accent">7</div><div class="lbl">Casos de devoluciones resueltos</div></div>
+        <div class="card stat"><div class="num accent">3</div><div class="lbl">Plantillas y esquemas</div></div>
+        <div class="card stat"><div class="num accent">4</div><div class="lbl">Enlaces, integraciones y políticas</div></div>
+      </div>
+
+      <div class="callout info" style="margin-top:20px;">
+        <strong>Sobre este hub · </strong>
+        Los datos de <em>indicadores, OKRs, equipo, proyectos y alertas</em> no están presentes en el documento fuente y por eso no se muestran secciones inventadas. Cuando se agreguen al wiki, esas vistas pueden habilitarse aquí sin cambiar la estructura.
+      </div>
+
+      <h3 style="margin-top:28px;">Accesos rápidos</h3>
+      <div class="grid grid-3 quick">
+        <a href="#devoluciones"><span class="em">💸</span> Reglas de devoluciones</a>
+        <a href="#traslados"><span class="em">🔀</span> Cuándo trasladar una reserva</a>
+        <a href="#cancelaciones"><span class="em">🚫</span> Cancelaciones enviadas por hoteles</a>
+        <a href="#reservas-otas"><span class="em">📥</span> Reservas no reflejadas de Expedia</a>
+        <a href="#diagnostico"><span class="em">🩺</span> Plantilla de escalamiento a diagnóstico</a>
+        <a href="#implementacion"><span class="em">🔗</span> Agendar sesión de OTAs</a>
+        <a href="#correo-hoteles"><span class="em">✉️</span> Plantilla de correo a hoteles</a>
+        <a href="#api"><span class="em">🔌</span> Documentación API Alojamientos</a>
+        <a href="#descuentos"><span class="em">🏷️</span> Política de descuentos</a>
+      </div>
+
+      <h3 style="margin-top:28px;">Reglas clave para recordar</h3>
+      <div class="grid grid-2">
+        <div class="card tight">
+          <span class="badge b-green">Devoluciones</span>
+          <p style="margin:8px 0 0;">Un pago siempre debe quedar registrado en una reserva. <strong>Nunca</strong> queda saldo a favor para usar después.</p>
+        </div>
+        <div class="card tight">
+          <span class="badge b-teal">PayU · reembolso a tarjeta</span>
+          <p style="margin:8px 0 0;">México: máx. <strong>1 mes</strong>. Colombia: máx. <strong>2 meses</strong>. Después, solo por transferencia.</p>
+        </div>
+        <div class="card tight">
+          <span class="badge b-orange">Traslados OTAs</span>
+          <p style="margin:8px 0 0;">Solo se traslada cuando hay sobreventa del Channel y aplica <strong>únicamente</strong> para plan Plus Ayenda.</p>
+        </div>
+        <div class="card tight">
+          <span class="badge b-amber">Expedia sin reflejar</span>
+          <p style="margin:8px 0 0;">El valor a registrar en el PMS es <strong>antes de IVA</strong>. Sumar 19 % solo si el hotel recauda IVA.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEVOLUCIONES -->
+    <section id="devoluciones" class="searchable" data-keywords="devoluciones reembolso pago payu cobre pse doble pago tarjeta hotel">
+      <h2><span class="h-emoji">💸</span> Devoluciones</h2>
+      <p class="section-sub">7 casos documentados sobre reembolsos, pagos duplicados, modificaciones y reembolsos sin confirmación del hotel.</p>
+
+      <details class="qa" open>
+        <summary><span class="qnum">1</span><span>Pago doble: ¿se puede trasladar a otra reserva del mismo huésped?</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p><strong>Sí</strong>, se puede pasar el pago a otra reserva, dejando las notas correspondientes.</p>
+          <p>Lo que <strong>no debe quedar</strong> es saldo a favor para usar después: el pago siempre debe quedar registrado en una reserva, o si no, se hace devolución.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qnum">2</span><span>Solicitud de reembolso enviada por el hotel: ¿la puede reportar el asesor o debe hacerla el huésped?</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p>Depende del medio de pago:</p>
+          <ul>
+            <li><strong>Cobre:</strong> el huésped debe contactarnos (se requieren datos de su cuenta bancaria).</li>
+            <li><strong>PayU con tarjeta:</strong> podemos reportar la devolución con el correo registrado en la reserva. <em>No</em> es necesario que el huésped nos contacte.</li>
+            <li><strong>PayU con PSE avanzado:</strong> debe ser el huésped quien lo solicite (se requieren datos bancarios). Siempre validar en la pasarela cómo se pagó realmente.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qnum">3</span><span>¿Hay un tiempo máximo para que el huésped pida el reembolso o lo aplique a otra reserva?</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p><strong>No.</strong> Actualmente no se cuenta con tiempo de vencimiento. El cliente puede solicitar su devolución cuando lo requiera.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qnum">4</span><span>PayU: ¿hasta cuándo se puede reembolsar a la misma tarjeta?</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p><strong>México:</strong> máximo 1 mes. <strong>Colombia:</strong> máximo 2 meses.</p>
+          <p>Si el cliente no realiza la solicitud dentro de ese periodo, se deben pedir datos de cuenta para devolución por transferencia; pasado ese tiempo no es posible retornar a la misma tarjeta.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qnum">5</span><span>PayU dice "devolución con TC" — ¿siempre es así?</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p><strong>No confiarse.</strong> En PayU también se puede pagar por PSE, y en ese caso la devolución debe hacerse por consignación a cuenta, no a la tarjeta.</p>
+          <p>Siempre validar en la pasarela cuál fue el método real de pago antes de subir la solicitud.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qnum">6</span><span>Reserva no reembolsable con pago y el hotel no recibió al huésped — ¿podemos reembolsar sin confirmación?</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p>Primera medida: contactar al hotel por llamada y abrir chat en Intercom para confirmar que no recibió al huésped.</p>
+          <p>Si no hay respuesta y el líder ya no está disponible, se debe indicar al huésped que debe volver a contactar en horario donde el líder esté activo. <strong>Estos casos requieren autorización del líder.</strong></p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qnum">7</span><span>Reserva no reembolsable: ¿cuándo podemos modificar la fecha?</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p>Por política de la reserva, <strong>no aplica para cambios</strong> desde soporte. El huésped debe comunicarse directamente con el hotel para que autorice la modificación.</p>
+          <p>Si el hotel autoriza, puede solicitar el cambio por el chat del PMS, o desde soporte nos comunicamos con el hotel para confirmar la autorización del cambio de fechas.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- CANCELACIONES -->
+    <section id="cancelaciones" class="searchable" data-keywords="cancelaciones hoteles ayenda no show liquidaciones reserva">
+      <h2><span class="h-emoji">🚫</span> Solicitudes de cancelación de hoteles</h2>
+      <p class="section-sub">Reglas para aceptar o rechazar cancelaciones que envían los hoteles.</p>
+
+      <details class="qa" open>
+        <summary><span class="qnum">1</span><span>Reservas de fechas pasadas: ¿se pueden cancelar?</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p>Sin importar el canal ni el motivo: <strong>rechazar la solicitud</strong> de cancelación y marcar la reserva en <em>no show</em> para eliminarla del sistema, como lo pide el hotel.</p>
+          <p><strong>Aplica solo para reservas del mismo mes.</strong> Las reservas de meses vencidos ya liquidadas no permite eliminarlas el sistema — la solicitud debe enviarse a <a href="mailto:liquidaciones@loggro.com">liquidaciones@loggro.com</a>.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qnum">2</span><span>Reserva de canales Ayenda, fecha actual o futura: ¿cuándo se acepta la cancelación?</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p>Solo se aceptan solicitudes de cancelación en estos casos:</p>
+          <ul>
+            <li>El hotel informa que <strong>el huésped</strong> es quien solicita cancelar.</li>
+            <li>La reserva es <strong>No Reembolsable y aún no ha sido pagada</strong>.</li>
+            <li><strong>Temporada alta</strong> y el huésped no confirma la reserva (sin importar el Rate Plan, siempre que la reserva NO tenga pago).</li>
+            <li>El hotel reporta <strong>mala conducta</strong> del huésped o es un huésped no deseado por una situación anterior.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- TRASLADOS -->
+    <section id="traslados" class="searchable" data-keywords="traslados sobreventa channel ayenda booking expedia plus basic medium premium">
+      <h2><span class="h-emoji">🔀</span> Traslados de reservas</h2>
+      <p class="section-sub">Reglas por canal y por plan. Determina quién asume el excedente en cada caso.</p>
+
+      <table>
+        <thead>
+          <tr><th>Canal</th><th>Motivo</th><th>Plan aplicable</th><th>¿Se traslada?</th><th>Excedente</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>OTA Ayenda</td>
+            <td>Hotel no puede recibir la reserva</td>
+            <td>Cualquier plan</td>
+            <td><span class="badge b-green">Sí</span></td>
+            <td>Lo paga el hotel</td>
+          </tr>
+          <tr>
+            <td>OTA Ayenda</td>
+            <td>Sobreventa del Channel</td>
+            <td>Cualquier plan</td>
+            <td><span class="badge b-green">Sí</span></td>
+            <td>Lo asumimos nosotros</td>
+          </tr>
+          <tr>
+            <td>Otras OTAs (Booking, Expedia, etc.)</td>
+            <td>Sobreventa del Channel</td>
+            <td><strong>Plus Ayenda</strong></td>
+            <td><span class="badge b-green">Sí</span></td>
+            <td>Lo asumimos nosotros</td>
+          </tr>
+          <tr>
+            <td>Otras OTAs (Booking, Expedia, etc.)</td>
+            <td>Cualquier motivo</td>
+            <td>Basic, Medium, Loggro y Premium</td>
+            <td><span class="badge b-orange">No</span></td>
+            <td>El hotel realiza su traslado</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout" style="margin-top:14px;">
+        <strong>Regla clave · </strong> Para planes Basic, Medium (Ayenda), planes Loggro y Premium: <strong>por ningún motivo</strong> se traslada una reserva de OTAs externas, aunque sea novedad del Channel.
+      </div>
+    </section>
+
+    <!-- RESERVAS OTAs -->
+    <section id="reservas-otas" class="searchable" data-keywords="reservas no reflejadas expedia pms iva importe total pago prepagada">
+      <h2><span class="h-emoji">📥</span> Reservas no reflejadas · Expedia</h2>
+      <p class="section-sub">Cómo reflejar manualmente una reserva de Expedia en el PMS según quién cobra.</p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <span class="badge b-teal">Escenario 1</span>
+          <h3 style="margin-top:8px;">Sin pago a la OTA · el hotel cobra</h3>
+          <p style="color:var(--ink-soft); font-size:13.5px;">Se identifica en Expedia como <em>"El hotel realiza el cobro"</em>.</p>
+          <p style="font-size:13.5px;">Valor a tomar para reflejar en el PMS: <strong>Importe total del pago</strong>.</p>
+        </div>
+        <div class="card">
+          <span class="badge b-teal">Escenario 2</span>
+          <h3 style="margin-top:8px;">Prepagada por la OTA</h3>
+          <p style="color:var(--ink-soft); font-size:13.5px;">Se identifica en Expedia como <em>"Expedia realiza el cobro"</em>.</p>
+          <p style="font-size:13.5px;">Valor a tomar para reflejar en el PMS: <strong>Importe total a tu favor</strong>.</p>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:14px;">
+        <strong>Nota sobre IVA · </strong> En ambos escenarios, el valor registrado en el PMS es <strong>antes de IVA</strong>, ya que Expedia no recauda IVA. Al valor de "Importe total del pago" o "Importe total a tu favor" se debe sumar <strong>19 %</strong> cuando el hotel tiene IVA activo. Si el hotel no recauda IVA, no se suma.
+      </div>
+    </section>
+
+    <!-- TARIFAS -->
+    <section id="tarifas" class="searchable" data-keywords="tarifas calendar aos plataformas canal rate plan">
+      <h2><span class="h-emoji">💲</span> Verificación de tarifas</h2>
+      <p class="section-sub">Cómo validar que las tarifas del PMS se estén enviando a los canales conectados.</p>
+
+      <div class="card">
+        <p>Cuando un hotel indica que cambió tarifas en su PMS pero no se reflejan en las plataformas conectadas, se puede validar desde el módulo <strong>Calendar de AOS</strong>.</p>
+        <p>El sistema muestra las tarifas registradas para cada tipo de habitación, rate plan y cantidad de huéspedes. Desde allí se puede filtrar y seleccionar el canal (App, Call center, Corporate, Front desk, OTA, Web) para identificar la tarifa enviada en cada caso.</p>
+      </div>
+    </section>
+
+    <!-- AYENDA -->
+    <section id="ayenda" class="searchable" data-keywords="ayenda ota pago comision plan aos plans">
+      <h2><span class="h-emoji">🏨</span> OTA Ayenda</h2>
+      <p class="section-sub">Reglas de pago y comisión del canal Ayenda.</p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h3 style="margin-top:0;">Pago del huésped</h3>
+          <p style="font-size:13.5px; color:var(--ink-soft);">Los huéspedes <strong>siempre</strong> tienen la opción de pagar en nuestra página. No hay forma de inhabilitar esa opción para que paguen únicamente en el hotel.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0;">Comisión por reserva</h3>
+          <p style="font-size:13.5px; color:var(--ink-soft);">Se verifica en <strong>AOS → Configuraciones de la propiedad → pestaña <em>Plans</em></strong>. Varía según el plan de cada propiedad.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIRE -->
+    <section id="sire" class="searchable" data-keywords="sire registro hotelero envío automático documento pais origen destino colombiano">
+      <h2><span class="h-emoji">📋</span> SIRE</h2>
+      <p class="section-sub">Qué revisar cuando el módulo SIRE genera error en el envío automático de registros.</p>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Validaciones cuando hay error en el envío</h3>
+        <ul style="margin:0; padding-left:18px; color:var(--ink-soft); font-size:13.5px;">
+          <li>Verificar que los registros con error <strong>no</strong> correspondan a huéspedes de nacionalidad colombiana.</li>
+          <li>Verificar que los registros con error tengan todos los campos requeridos por SIRE diligenciados: <strong>tipo y número de documento, país de origen y país de destino</strong>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- FACTURACIÓN -->
+    <section id="facturacion" class="searchable" data-keywords="facturación pymes sincronización error tipo documento espacios diagnostico">
+      <h2><span class="h-emoji">🧾</span> Facturación</h2>
+      <p class="section-sub">Manejo de errores de sincronización entre Alojamientos y Pymes.</p>
+
+      <details class="qa" open>
+        <summary><span class="qnum">1</span><span>Factura aprobada en Alojamientos con error de sincronización con Pymes</span><span class="caret">›</span></summary>
+        <div class="body">
+          <p>Pasos a seguir:</p>
+          <ul>
+            <li>Revisar en la factura que <strong>tipo de documento y número de documento</strong> no contengan espacios ni caracteres especiales que puedan generar el error.</li>
+            <li>Si no se identifican errores en la factura, <strong>escalar el caso a diagnóstico</strong>, quien determinará si el error corresponde a Alojamientos o Pymes y los pasos a seguir.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- LIQUIDACIONES MX -->
+    <section id="liquidaciones" class="searchable" data-keywords="liquidaciones mexico cuenta bancaria certificación finanzas">
+      <h2><span class="h-emoji">🇲🇽</span> Liquidaciones · México</h2>
+      <p class="section-sub">Requisitos para pagos de liquidaciones en el mercado mexicano.</p>
+
+      <div class="card">
+        <p style="font-size:13.5px; margin:0;">Para México <strong>no</strong> es necesario tener la cuenta bancaria registrada en el sistema. Sin embargo, el hotel debe compartir una <strong>certificación bancaria</strong> por correo al equipo de finanzas para su manejo interno.</p>
+      </div>
+    </section>
+
+    <!-- PREMIUM APP -->
+    <section id="premium" class="searchable" data-keywords="premium atención prioritaria app implementación éxito cliente ticket pipeline">
+      <h2><span class="h-emoji">⭐</span> Atención Prioritaria Premium (APP)</h2>
+      <p class="section-sub">Beneficios del plan APP y cómo escalar casos de implementación.</p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <h3 style="margin-top:0;">Beneficios del plan</h3>
+          <ul style="padding-left:18px; font-size:13.5px; color:var(--ink-soft); margin:6px 0 0;">
+            <li>Sesiones de implementación <strong>indefinidas</strong>.</li>
+            <li>Atención en servicio al cliente con <strong>prioridad</strong> sobre otros clientes.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0;">Escalamiento a implementación</h3>
+          <p style="font-size:13.5px; color:var(--ink-soft); margin:6px 0 10px;">Solo aplica para clientes con APP. No es necesario generar agenda: el ticket llega al pipeline de implementación y ellos contactan al cliente.</p>
+          <div class="linkbox">
+            <span class="lb-emoji">📝</span>
+            <div>
+              <div class="lb-title">Formulario de escalamiento APP</div>
+              <div class="lb-desc">Servicio y éxito de cliente → implementación</div>
+            </div>
+            <a class="lb-cta" href="https://share.hsforms.com/1p_PJEje5TWKhxAxmy9QjUQck0fn" target="_blank" rel="noopener">Abrir</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DIAGNÓSTICO -->
+    <section id="diagnostico" class="searchable" data-keywords="diagnóstico escalar plantilla ticket cliente NIT prioridad aplicación">
+      <h2><span class="h-emoji">🩺</span> Casos de diagnóstico</h2>
+      <p class="section-sub">Plantilla obligatoria para escalar casos al equipo de diagnóstico.</p>
+
+      <div class="template"><strong>Cliente:</strong> 
+<strong>NIT:</strong> 
+<strong>Prioridad:</strong> 
+<strong>Fecha y hora del incidente:</strong> 
+<strong>Fecha y hora que reporta el cliente:</strong> 
+<strong>Aplicación:</strong> 
+<strong>Proceso y falla:</strong> ¿qué proceso está realizando el cliente y cuál es la falla que presenta?
+<strong>Validaciones soporte:</strong> 
+<strong>Anexos:</strong> 
+<strong>Consultor que reporta:</strong> 
+<strong>Solución alterna:</strong> N/A
+<strong>Datos del contacto:</strong> nombre, teléfono y correo</div>
+    </section>
+
+    <!-- SUGERENCIAS -->
+    <section id="sugerencias" class="searchable" data-keywords="sugerencias mejora cliente reportar líder hubspot pipeline ticket">
+      <h2><span class="h-emoji">💡</span> Sugerencias de clientes</h2>
+      <p class="section-sub">Cómo reportar una sugerencia de mejora recibida de un cliente.</p>
+
+      <p style="color:var(--ink-soft); font-size:13.5px;">Al recibir una sugerencia, el asesor debe reportarla con su líder usando siempre esta plantilla:</p>
+
+      <div class="template"><strong>Nombre del ticket:</strong> (ID PMS y nombre del alojamiento)
+<strong>Pipeline:</strong> Diagnóstico
+<strong>Estado del ticket:</strong> Sugerencias Alojamientos
+<strong>Fuente:</strong> Chat / Llamada
+<strong>Producto:</strong> Alojamientos
+<strong>Fecha de creación:</strong> (fecha en la que se recibe la solicitud)
+<strong>Descripción del ticket:</strong> (sugerencia recibida del cliente)
+<strong>Propietario del ticket:</strong> (HubSpot lo asigna a quien crea el ticket)
+<strong>Tiempo de llamada:</strong> (0 cuando es por chat)
+<strong>Correo, número de contacto y documento:</strong> registrados en el perfil de configuraciones de AOS (para asociar el ticket a la empresa y contacto)</div>
+    </section>
+
+    <!-- IMPLEMENTACIÓN -->
+    <section id="implementacion" class="searchable" data-keywords="implementación sesión ota conexión análisis nico reconexión sincronización desconexión">
+      <h2><span class="h-emoji">🔗</span> Sesiones de implementación y análisis OTAs</h2>
+      <p class="section-sub">Qué agendamiento usar según si la propiedad está conectando su OTA por primera vez o ya está conectada.</p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <span class="badge b-green">Conexión inicial</span>
+          <h3 style="margin-top:8px;">Sesión con Implementación</h3>
+          <p style="font-size:13.5px; color:var(--ink-soft);">Únicamente para propiedades que <strong>no han conectado</strong> sus OTAs (primera conexión).</p>
+          <div class="linkbox">
+            <span class="lb-emoji">📅</span>
+            <div>
+              <div class="lb-title">Agendar sesión inicial</div>
+              <div class="lb-desc">meetings.hubspot.com/loggro/alojamientos</div>
+            </div>
+            <a class="lb-cta" href="https://meetings.hubspot.com/loggro/alojamientos?uuid=705634ee-32e7-49dc-ba64-6f36627e90a8" target="_blank" rel="noopener">Abrir</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <span class="badge b-teal">OTA ya conectada</span>
+          <h3 style="margin-top:8px;">Análisis con Nico</h3>
+          <p style="font-size:13.5px; color:var(--ink-soft);">Reconexiones, sincronización, desconexión, fallas. Solo propiedades con OTA conectada e implementación finalizada.</p>
+          <div class="linkbox">
+            <span class="lb-emoji">📅</span>
+            <div>
+              <div class="lb-title">Agendar con Nico</div>
+              <div class="lb-desc">meetings.hubspot.com/nicolas-devia</div>
+            </div>
+            <a class="lb-cta" href="https://meetings.hubspot.com/nicolas-devia/sesion-analista-otas?uuid=e9aea5d6-70c4-459a-a517-87ed56060b4f" target="_blank" rel="noopener">Abrir</a>
+          </div>
+          <div class="linkbox" style="margin-top:8px;">
+            <span class="lb-emoji">🎫</span>
+            <div>
+              <div class="lb-title">Crear ticket a Nico</div>
+              <div class="lb-desc">Requerido además del agendamiento</div>
+            </div>
+            <a class="lb-cta" href="https://share.hsforms.com/1BYB5nei2TjW-moQeI8lwOgck0fn" target="_blank" rel="noopener">Abrir</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORREO A HOTELES -->
+    <section id="correo-hoteles" class="searchable" data-keywords="correo email plantilla hoteles respuesta caso ticket cierre soporte whatsapp horario">
+      <h2><span class="h-emoji">✉️</span> Plantilla de correo a hoteles</h2>
+      <p class="section-sub">Esquema para responder por correo cuando se debe dar respuesta a un caso reportado por el hotel.</p>
+
+      <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+        <button id="copyEmail" style="background:var(--green); color:#fff; border:none; padding:8px 14px; border-radius:7px; font-family:inherit; font-weight:600; font-size:13px; cursor:pointer;">📋 Copiar plantilla</button>
+        <span id="copyOk" style="align-self:center; font-size:12.5px; color:var(--green-dark); opacity:0; transition:opacity .2s;">Copiado</span>
+      </div>
+
+      <div class="card" style="padding:22px 26px;">
+        <div id="emailTpl" style="font-size:14px; line-height:1.7; color:var(--ink); white-space:pre-wrap; font-family:'Montserrat',sans-serif;">Estimados Sres. hospedaje <mark style="background:#FDF0D0; padding:1px 6px; border-radius:4px; font-weight:600;">[Nombre del alojamiento]</mark>,
+
+Esperamos se encuentren muy bien.
+
+En atención a la solicitud realizada a través del chat de soporte de Loggro Alojamientos, le informamos que su caso <mark style="background:#FDF0D0; padding:1px 6px; border-radius:4px; font-weight:600;">"[Nombre del caso]"</mark> fue revisado por el área correspondiente y se encuentra debidamente solucionado.
+
+Le solicitamos, por favor, validar la información. En caso de no estar conforme o presentar alguna observación, le agradecemos responder a este mismo correo o comunicarse a través de nuestros canales de soporte. Procederemos con el cierre definitivo del ticket.
+
+Para cualquier inquietud adicional, puede contactarnos a través de nuestro canal de servicio al cliente, disponible de 7:00 a. m. a 10:00 p. m. en su PMS, o por medio de nuestro WhatsApp para propiedades: <strong>+57 310 242 9665</strong>.
+
+Cordialmente,
+Equipo Loggro Alojamientos</div>
+      </div>
+
+      <div class="callout info" style="margin-top:14px;">
+        <strong>Antes de enviar · </strong> Reemplazar los campos resaltados: <em>[Nombre del alojamiento]</em> y <em>[Nombre del caso]</em>. Verificar que el ticket esté efectivamente cerrado o resuelto por el área correspondiente antes de enviar.
+      </div>
+
+      <div class="grid grid-3" style="margin-top:14px;">
+        <div class="card tight">
+          <span class="badge b-teal">Canal PMS</span>
+          <p style="margin:8px 0 0; font-size:13px;">Servicio al cliente disponible de <strong>7:00 a.m. a 10:00 p.m.</strong></p>
+        </div>
+        <div class="card tight">
+          <span class="badge b-green">WhatsApp propiedades</span>
+          <p style="margin:8px 0 0; font-size:13px;"><strong>+57 310 242 9665</strong></p>
+        </div>
+        <div class="card tight">
+          <span class="badge b-gray">Cierre del ticket</span>
+          <p style="margin:8px 0 0; font-size:13px;">Se cierra si el hotel no responde con observaciones.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- API -->
+    <section id="api" class="searchable" data-keywords="api integración desarrolladores conexión hotel developer documentación endpoint">
+      <h2><span class="h-emoji">🔌</span> API Alojamientos</h2>
+      <p class="section-sub">Contamos con una API pública para que los hoteles que lo requieran puedan conectarse e integrarse con Loggro Alojamientos.</p>
+
+      <div class="card">
+        <p style="margin:0 0 12px; font-size:13.5px; color:var(--ink-soft);">Si un hotel solicita una conexión vía API para integrar su operación con nuestro sistema, se le puede compartir directamente el enlace oficial a la documentación técnica para desarrolladores.</p>
+
+        <div class="linkbox">
+          <span class="lb-emoji">📚</span>
+          <div>
+            <div class="lb-title">Documentación oficial · developer.loggro.com</div>
+            <div class="lb-desc">Introducción a la API de Alojamientos y referencia de endpoints</div>
+          </div>
+          <a class="lb-cta" href="https://developer.loggro.com/reference/introduccion-alojamientos" target="_blank" rel="noopener">Abrir</a>
+        </div>
+      </div>
+
+      <div class="callout info" style="margin-top:12px;">
+        <strong>Cuándo compartir · </strong> Este recurso está dirigido a hoteles con equipo técnico o proveedor de desarrollo que quieran integrarse. Para conexiones de OTAs por primera vez o reconexiones, seguir usando el flujo de <a href="#implementacion">sesiones e implementación</a>.
+      </div>
+    </section>
+
+    <!-- POLÍTICA DE DESCUENTOS -->
+    <section id="descuentos" class="searchable" data-keywords="descuentos política razón líder aprobación contador partner renovación periodo pago">
+      <h2><span class="h-emoji">🏷️</span> Política de descuentos</h2>
+      <p class="section-sub">Versión 1.0 · vigente desde el 3 de marzo de 2026. Aplica a todo el portafolio Loggro (ERP, Nómina, Restobar, Alojamientos, Postienda).</p>
+
+      <div class="callout" style="margin-bottom:18px;">
+        <strong>Regla de oro · </strong> Todo descuento aprobado debe tener registrado de forma clara y precisa el motivo en el campo <strong>"Razón"</strong> del sistema. Un descuento sin justificación documentada o con una razón genérica/ambigua se considera una <strong>falla de proceso</strong>, esté o no dentro del estándar.
+      </div>
+
+      <h3>Descuento estándar por periodo de pago</h3>
+      <p style="color:var(--ink-soft); font-size:13.5px; margin-top:0;">Porcentajes que el sistema aplica automáticamente según el periodo contratado.</p>
+      <table>
+        <thead>
+          <tr><th>Periodo de pago</th><th>Descuento estándar automático</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>12 meses</strong></td><td>12 %</td><td><span class="badge b-green">Automático</span></td></tr>
+          <tr><td><strong>6 meses</strong></td><td>8 %</td><td><span class="badge b-green">Automático</span></td></tr>
+          <tr><td><strong>3 meses</strong></td><td>5 %</td><td><span class="badge b-green">Automático</span></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:13px; color:var(--ink-soft); margin-top:10px;">Un líder puede aprobar un descuento <strong>por encima</strong> de estos valores, pero al hacerlo debe asegurarse de que la razón quede documentada con precisión, porque se está otorgando una condición fuera del estándar.</p>
+
+      <div class="grid grid-2" style="margin-top:22px;">
+        <div class="card">
+          <span class="badge b-orange">Canal Partner</span>
+          <h3 style="margin:8px 0 6px;">Contador Partner Oficial · 25 %</h3>
+          <p style="font-size:13px; color:var(--ink-soft); margin:0 0 8px;">Descuento predefinido, pero no de aplicación libre:</p>
+          <ul style="font-size:13px; color:var(--ink-soft); padding-left:18px; margin:0;">
+            <li>El líder debe <strong>validar</strong> que el cliente esté asociado a un Contador Partner Oficial antes de aprobar.</li>
+            <li><strong>No</strong> es acumulable con descuentos de negociación comercial.</li>
+            <li><strong>No</strong> constituye precedente para descuentos en negociaciones directas.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="badge b-teal">Renovaciones</span>
+          <h3 style="margin:8px 0 6px;">Condición especial previa (heredada)</h3>
+          <ol style="font-size:13px; color:var(--ink-soft); padding-left:18px; margin:0;">
+            <li>El analista verifica la condición vigente en <strong>Loggro Admin</strong> antes de procesar la renovación.</li>
+            <li>Si se renueva con el mismo descuento recurrente, dejar explícito en las <strong>observaciones del sistema</strong>.</li>
+            <li>El líder aprobador valida que la condición heredada sigue siendo coherente con la realidad comercial actual del cliente.</li>
+          </ol>
+        </div>
+      </div>
+
+      <h3 style="margin-top:24px;">Flujo de aprobación</h3>
+      <div class="card">
+        <p style="margin:0; font-size:13.5px;">Todo descuento que instrumente un analista debe ser <strong>aprobado por el líder a cargo, sin excepción</strong>. Esto incluye el descuento por Contador Partner: aunque el 25 % está predefinido, el líder debe validar la asociación real con el partner antes de aprobar.</p>
+      </div>
+
+      <h3 style="margin-top:24px;">Qué debe contener el campo "Razón"</h3>
+      <div class="grid grid-2">
+        <div class="card tight">
+          <span class="badge b-gray">Obligatorio</span>
+          <p style="margin:8px 0 0; font-size:13px;"><strong>Tipo de descuento:</strong> estándar por periodo, contador partner o condición heredada.</p>
+        </div>
+        <div class="card tight">
+          <span class="badge b-gray">Obligatorio</span>
+          <p style="margin:8px 0 0; font-size:13px;"><strong>Porcentaje otorgado.</strong></p>
+        </div>
+        <div class="card tight">
+          <span class="badge b-gray">Obligatorio</span>
+          <p style="margin:8px 0 0; font-size:13px;"><strong>Justificación comercial específica.</strong> No valen razones genéricas como "por solicitud del cliente".</p>
+        </div>
+        <div class="card tight">
+          <span class="badge b-amber">Si supera el estándar</span>
+          <p style="margin:8px 0 0; font-size:13px;"><strong>Nombre del líder que aprobó.</strong></p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:24px;">Monitoreo y vigencia</h3>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3 style="margin:0 0 6px; font-size:14px;">Alertas automáticas</h3>
+          <p style="font-size:13px; color:var(--ink-soft); margin:0;">Alertas periódicas identifican descuentos fuera del estándar. <strong>No bloquean</strong> la operación: generan visibilidad para revisión y ayudan a detectar patrones que requieran ajuste de política o conversaciones con líderes específicos.</p>
+        </div>
+        <div class="card">
+          <h3 style="margin:0 0 6px; font-size:14px;">Revisión trimestral</h3>
+          <p style="font-size:13px; color:var(--ink-soft); margin:0;">Los valores estándar se revisan trimestralmente contra datos reales de descuentos otorgados vs. retención, para determinar si los porcentajes requieren ajuste. Aprobado por <strong>Director de Satisfacción & Éxito del Cliente</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="foot">
+      Fuente: <em>Wiki Alojamientos</em> · Identidad: Loggro Alojamientos · Este hub refleja únicamente el contenido presente en el documento. Secciones de indicadores, OKRs, equipo y proyectos no están en la fuente y se agregarán cuando el wiki los incorpore.
+    </div>
+  </main>
+</div>
+
+<button id="toTop" title="Volver arriba">↑</button>
+
+<script>
+  // Smooth active nav on scroll
+  const links = document.querySelectorAll('.nav-link');
+  const sections = Array.from(links).map(l => document.querySelector(l.getAttribute('href')));
+  function onScroll() {
+    let idx = 0;
+    const y = window.scrollY + 120;
+    sections.forEach((s, i) => { if (s && s.offsetTop <= y) idx = i; });
+    links.forEach(l => l.classList.remove('active'));
+    links[idx].classList.add('active');
+    document.getElementById('toTop').classList.toggle('show', window.scrollY > 400);
+  }
+  window.addEventListener('scroll', onScroll);
+  onScroll();
+
+  document.getElementById('toTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // Search
+  const search = document.getElementById('search');
+  const sectionsSearchable = document.querySelectorAll('section.searchable');
+  search.addEventListener('input', () => {
+    const q = search.value.trim().toLowerCase();
+    if (!q) {
+      sectionsSearchable.forEach(s => s.classList.remove('hidden'));
+      return;
+    }
+    sectionsSearchable.forEach(s => {
+      const kw = (s.dataset.keywords || '') + ' ' + s.textContent.toLowerCase();
+      s.classList.toggle('hidden', !kw.toLowerCase().includes(q));
+    });
+  });
+
+  // Copy email template
+  const copyBtn = document.getElementById('copyEmail');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+      const el = document.getElementById('emailTpl');
+      const text = el.innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const ok = document.getElementById('copyOk');
+        ok.style.opacity = '1';
+        setTimeout(() => ok.style.opacity = '0', 1800);
+      });
+    });
+  }
+
+  // Close sidebar on mobile after click
+  document.querySelectorAll('.nav-link').forEach(l => {
+    l.addEventListener('click', () => {
+      if (window.innerWidth <= 860) document.getElementById('sidebar').classList.remove('open');
+    });
+  });
+</script>
+</body>
+</html>
