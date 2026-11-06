@@ -233,6 +233,56 @@
     h1 { font-size: 26px; }
   }
 
+  /* Producto · escalamientos */
+  .status-pills { display:flex; gap:6px; flex-wrap:wrap; margin: 8px 0 14px; }
+  .pill {
+    padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 600;
+    background:#fff; border: 1px solid var(--border); cursor: pointer;
+    font-family: inherit; color: var(--ink-soft);
+    transition: all .15s;
+  }
+  .pill:hover { border-color: var(--green); color: var(--ink); }
+  .pill.active { background: var(--ink); color:#fff; border-color: var(--ink); }
+  .pill .dot {
+    display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:5px; vertical-align:middle;
+  }
+  .st-review { background:#FDF0D0; color:#8A6A00; }
+  .st-dev    { background:#E4F1F4; color: var(--teal); }
+  .st-done   { background: var(--green-soft); color: var(--green-dark); }
+  .st-reject { background:#F5E1DD; color: var(--red); }
+  .st-hold   { background:#EFEEEA; color: var(--ink-soft); }
+  .d-review { background:#C79100; }
+  .d-dev    { background: var(--teal); }
+  .d-done   { background: var(--green); }
+  .d-reject { background: var(--red); }
+  .d-hold   { background: var(--muted); }
+
+  .case-card {
+    background:#fff; border:1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 10px;
+  }
+  .case-head { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+  .case-id { font-size: 11.5px; color: var(--muted); font-weight: 600; letter-spacing:.3px; }
+  .case-title { font-weight: 600; font-size: 14.5px; flex:1; min-width: 200px; }
+  .case-meta { display:grid; grid-template-columns: repeat(4, 1fr); gap:10px; font-size:12px; color:var(--ink-soft); margin: 10px 0 8px; border-top:1px solid var(--border); padding-top:10px; }
+  .case-meta div strong { display:block; color: var(--muted); font-size:10.5px; text-transform: uppercase; letter-spacing:.4px; margin-bottom:2px; font-weight:600; }
+  .case-desc { font-size: 13px; color: var(--ink-soft); margin: 4px 0 0; }
+  .case-response {
+    margin-top: 10px; padding: 10px 12px; background: #F7F6F2; border-radius: 7px;
+    font-size: 12.5px; color: var(--ink);
+    border-left: 3px solid var(--teal);
+  }
+  .case-response strong { display:block; font-size: 10.5px; color: var(--teal); text-transform: uppercase; letter-spacing:.4px; margin-bottom: 4px; font-weight: 700; }
+  @media (max-width: 700px) {
+    .case-meta { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .empty-form {
+    background: #F7F6F2; border: 1px dashed var(--border-strong);
+    border-radius: 9px; padding: 16px 18px; font-size: 12.5px; color: var(--ink-soft);
+  }
+  .empty-form code { background:#fff; padding: 1px 6px; border-radius: 4px; border:1px solid var(--border); font-size:11.5px; }
+
   /* Footnote */
   .foot { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; }
 </style>
@@ -291,6 +341,10 @@
         <li><a href="#api" class="nav-link"><span class="emoji">🔌</span> API Alojamientos</a></li>
         <li><a href="#descuentos" class="nav-link"><span class="emoji">🏷️</span> Política de descuentos</a></li>
       </ul>
+      <div class="section-label">Producto</div>
+      <ul>
+        <li><a href="#producto" class="nav-link"><span class="emoji">🛠️</span> Escalamientos a Producto</a></li>
+      </ul>
     </nav>
   </aside>
 
@@ -306,7 +360,7 @@
       </div>
 
       <div class="grid grid-4">
-        <div class="card stat"><div class="num accent">14</div><div class="lbl">Temas operativos documentados</div></div>
+        <div class="card stat"><div class="num accent">15</div><div class="lbl">Temas operativos documentados</div></div>
         <div class="card stat"><div class="num accent">7</div><div class="lbl">Casos de devoluciones resueltos</div></div>
         <div class="card stat"><div class="num accent">3</div><div class="lbl">Plantillas y esquemas</div></div>
         <div class="card stat"><div class="num accent">4</div><div class="lbl">Enlaces, integraciones y políticas</div></div>
@@ -328,6 +382,7 @@
         <a href="#correo-hoteles"><span class="em">✉️</span> Plantilla de correo a hoteles</a>
         <a href="#api"><span class="em">🔌</span> Documentación API Alojamientos</a>
         <a href="#descuentos"><span class="em">🏷️</span> Política de descuentos</a>
+        <a href="#producto"><span class="em">🛠️</span> Escalamientos a Producto</a>
       </div>
 
       <h3 style="margin-top:28px;">Reglas clave para recordar</h3>
@@ -946,6 +1001,147 @@ Equipo Loggro Alojamientos</div>
       </div>
     </section>
 
+    <!-- ESCALAMIENTOS A PRODUCTO -->
+    <section id="producto" class="searchable" data-keywords="producto escalamiento falla novedad sugerencia desarrollo roadmap bug issue backlog pendiente resuelto rechazado">
+      <h2><span class="h-emoji">🛠️</span> Escalamientos a Producto</h2>
+      <p class="section-sub">Novedades, fallas y sugerencias que Servicio al Cliente ha escalado al equipo de Producto. Seguimiento del estado, respuestas y lo que están trabajando.</p>
+
+      <div class="callout info" style="margin-bottom:18px;">
+        <strong>Propósito · </strong> Dar visibilidad al equipo de SAC sobre lo que Producto tiene en su radar, lo que está desarrollando y las respuestas finales a cada caso escalado.
+      </div>
+
+      <!-- Gobierno de la vista -->
+      <div class="card" style="margin-bottom:22px; border-left: 4px solid var(--green);">
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <div style="width:40px; height:40px; border-radius:50%; background:var(--green-soft); display:flex; align-items:center; justify-content:center; font-size:18px;">👤</div>
+            <div>
+              <div style="font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; font-weight:600;">Responsable de esta vista</div>
+              <div style="font-weight:600; font-size:14px;">Viviana Lara</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:22px; flex-wrap:wrap;">
+            <div>
+              <div style="font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; font-weight:600;">Última revisión</div>
+              <div style="font-weight:600; font-size:14px;">6 nov 2026</div>
+            </div>
+            <div>
+              <div style="font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; font-weight:600;">Cadencia</div>
+              <div style="font-weight:600; font-size:14px;">Mensual</div>
+            </div>
+            <div>
+              <div style="font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.5px; font-weight:600;">Próxima sync con Producto</div>
+              <div style="font-weight:600; font-size:14px;">Inicio de diciembre 2026</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border); font-size:12.5px; color:var(--ink-soft);">
+          <strong style="color:var(--ink);">Compromiso del gobierno · </strong>
+          Producto comparte el <strong>inicio de cada mes</strong> lo que hizo y en qué está trabajando. La vista se actualiza en esa cadencia para dar visibilidad al equipo de servicio sobre el avance de los casos escalados.
+        </div>
+      </div>
+
+      <!-- Resumen estado -->
+      <div class="grid grid-4">
+        <div class="card stat"><div class="num" style="color:#8A6A00;" data-count="review">0</div><div class="lbl">En revisión</div></div>
+        <div class="card stat"><div class="num" style="color:var(--teal);" data-count="dev">0</div><div class="lbl">En desarrollo</div></div>
+        <div class="card stat"><div class="num" style="color:var(--green-dark);" data-count="done">0</div><div class="lbl">Resueltos</div></div>
+        <div class="card stat"><div class="num" style="color:var(--red);" data-count="reject">0</div><div class="lbl">No viables</div></div>
+      </div>
+
+      <h3 style="margin-top:28px;">Filtrar por estado</h3>
+      <div class="status-pills" id="statusPills">
+        <button class="pill active" data-filter="all">Todos</button>
+        <button class="pill" data-filter="review"><span class="dot d-review"></span>En revisión</button>
+        <button class="pill" data-filter="dev"><span class="dot d-dev"></span>En desarrollo</button>
+        <button class="pill" data-filter="done"><span class="dot d-done"></span>Resuelto</button>
+        <button class="pill" data-filter="reject"><span class="dot d-reject"></span>No viable</button>
+        <button class="pill" data-filter="hold"><span class="dot d-hold"></span>En espera</button>
+      </div>
+
+      <div id="caseList">
+        <!-- Caso 1 · Teléfonos Booking -->
+        <div class="case-card" data-status="reject">
+          <div class="case-head">
+            <span class="case-title">Números telefónicos no se registran en reservas de Booking</span>
+            <span class="badge st-reject">No viable</span>
+            <span class="badge b-orange">Falla</span>
+          </div>
+          <p class="case-desc">Al llegar las reservas desde Booking, los números telefónicos de los huéspedes no quedan registrados en la reserva dentro del PMS.</p>
+          <div class="case-meta">
+            <div><strong>Escalado</strong>8 de octubre de 2026</div>
+            <div><strong>Respondido por Producto</strong>30 de octubre de 2026</div>
+            <div><strong>Tiempo de respuesta</strong>22 días</div>
+            <div><strong>Resultado</strong>Situación ajena a Loggro</div>
+          </div>
+          <div class="case-response">
+            <strong>Respuesta de Producto (30 oct 2026)</strong>
+            La novedad viene desde Booking: de parte de ellos bloquearon la opción de que los channel manager pudieran traer los números de los huéspedes. Esta situación es ajena a nuestro control, ya que desde la fuente (Booking) está restringida esta opción. Los hoteles deben entrar a su extranet y buscar los números de los huéspedes allí.
+          </div>
+        </div>
+
+        <!-- Caso 2 · Check-in online link directo -->
+        <div class="case-card" data-status="done">
+          <div class="case-head">
+            <span class="case-title">Check-in online solicitaba número telefónico para iniciar</span>
+            <span class="badge st-done">Resuelto</span>
+            <span class="badge b-orange">Falla</span>
+          </div>
+          <p class="case-desc">El check-in online no estaba funcionando correctamente porque solicitaba el número telefónico para poder iniciar, y ese dato no estaba llegando a las reservas, bloqueando el proceso al huésped.</p>
+          <div class="case-meta">
+            <div><strong>Escalado</strong>22 de octubre de 2026</div>
+            <div><strong>Respondido por Producto</strong>23 de octubre de 2026</div>
+            <div><strong>Tiempo de respuesta</strong>1 día</div>
+            <div><strong>Resultado</strong>Solucionado</div>
+          </div>
+          <div class="case-response">
+            <strong>Respuesta de Producto (23 oct 2026)</strong>
+            El check-in online ahora está con link directo, es decir que no solicita datos de validación para poder empezar a completar los campos.
+          </div>
+        </div>
+
+        <!-- Caso 3 · Check-in online varios huéspedes -->
+        <div class="case-card" data-status="dev">
+          <div class="case-head">
+            <span class="case-title">Check-in online con varios huéspedes: no avisa que faltan datos por llenar</span>
+            <span class="badge st-dev">En desarrollo</span>
+            <span class="badge b-teal">Sugerencia</span>
+          </div>
+          <p class="case-desc">Cuando la reserva tiene varios huéspedes, muchos clientes solo llenan la primera pestaña (la del primer huésped) y le dan guardar. El sistema no guarda porque falta completar la información de los demás huéspedes, pero a ojos del huésped el link "no sirve". Se solicitó que apareciera un aviso informando que faltan datos por llenar.</p>
+          <div class="case-meta">
+            <div><strong>Escalado</strong>30 de octubre de 2026</div>
+            <div><strong>Respondido por Producto</strong>Sin respuesta aún</div>
+            <div><strong>Impacto</strong>Experiencia del huésped</div>
+            <div><strong>Resultado</strong>Pendiente de solución</div>
+          </div>
+          <div class="case-response">
+            <strong>Estado actual</strong>
+            Producto aún está trabajando en esta parte. No se ha solucionado al corte de la sincronización de noviembre.
+          </div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:36px;">🚧 En qué está trabajando Producto</h3>
+      <p style="color:var(--muted); font-size:12.5px; margin-top:0;">Iniciativas en curso visibles para el área de servicio. Actualizar a medida que Producto comparta el roadmap.</p>
+
+      <div class="grid grid-2">
+        <div class="card">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+            <h3 style="margin:0; font-size:14.5px;">🧾 Facturación · Detalle de estadía y personalización</h3>
+            <span class="badge st-dev">En desarrollo</span>
+          </div>
+          <p style="font-size:13px; color:var(--ink-soft); margin:0 0 10px;">Producto está trabajando en incorporar a la factura el detalle de la estadía: <strong>número de noches, valor por noche y tipo de habitación</strong>. Adicionalmente, se habilitará la opción de agregar <strong>observaciones</strong> y el <strong>logo</strong> en la factura.</p>
+          <div style="font-size:12px; color:var(--ink-soft); background:var(--green-soft); padding:8px 10px; border-radius:6px;">
+            <strong style="color:var(--green-dark);">Impacto para servicio · </strong> Reduce consultas relacionadas con la sub-etiqueta <em>"FE personalización factura"</em> y responde a solicitudes recurrentes de los hoteles sobre el formato de factura.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout" style="margin-top:20px;">
+        <strong>Cómo mantener esta vista actualizada · </strong> A inicio de cada mes, Producto comparte lo que hizo y lo que está haciendo. Viviana actualiza esta vista con esa información: agrega los nuevos casos escalados durante el mes, mueve el estado de los existentes según la respuesta recibida y refresca el bloque de iniciativas.
+      </div>
+    </section>
+
     <div class="foot">
       Fuente: <em>Wiki Alojamientos</em> · Identidad: Loggro Alojamientos · Este hub refleja únicamente el contenido presente en el documento. Secciones de indicadores, OKRs, equipo y proyectos no están en la fuente y se agregarán cuando el wiki los incorpore.
     </div>
@@ -999,6 +1195,39 @@ Equipo Loggro Alojamientos</div>
       });
     });
   }
+
+  // Producto · filtros de estado y contadores
+  (function() {
+    const pills = document.querySelectorAll('#statusPills .pill');
+    const cards = document.querySelectorAll('#caseList .case-card');
+    const empty = document.getElementById('emptyState');
+
+    function updateCounts() {
+      const counts = { review: 0, dev: 0, done: 0, reject: 0, hold: 0 };
+      cards.forEach(c => {
+        const id = c.querySelector('.case-id');
+        if (id && id.textContent.includes('EJEMPLO')) return; // no contar ejemplos
+        const st = c.dataset.status;
+        if (counts[st] !== undefined) counts[st]++;
+      });
+      document.querySelectorAll('[data-count]').forEach(el => {
+        el.textContent = counts[el.dataset.count] || 0;
+      });
+    }
+
+    pills.forEach(p => {
+      p.addEventListener('click', () => {
+        pills.forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+        const f = p.dataset.filter;
+        cards.forEach(c => {
+          c.style.display = (f === 'all' || c.dataset.status === f) ? '' : 'none';
+        });
+      });
+    });
+
+    updateCounts();
+  })();
 
   // Close sidebar on mobile after click
   document.querySelectorAll('.nav-link').forEach(l => {
